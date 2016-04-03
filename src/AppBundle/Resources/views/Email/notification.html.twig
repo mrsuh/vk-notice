@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+</head>
+<body>
+{% for community in letter %}
+    {% for needle,comments in  community %}
+        <div style="background-color: #99CDD8; margin-bottom: 20px;">Слово: {{ needle }}</div>
+        {% for comment in comments %}
+            <div style="background-color: #99CDD8; margin-bottom: 20px;">
+                {{ comment.text }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+{% endfor %}
+</body>
+</html>

@@ -1,0 +1,8 @@
+index:
+    path:     /
+    defaults: { _controller: AppBundle:Default:index }
+
+notify:
+    path:     /notify
+    defaults: { _controller: AppBundle:Default:notify }
+    methods: [POST]
