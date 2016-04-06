@@ -4,5 +4,5 @@ vk-notify
 Installation
 ------------
 ```
-sh bin/deploy
+sh bin/install
 ```

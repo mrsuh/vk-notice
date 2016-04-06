@@ -4,7 +4,7 @@
 parameters:
     database_host:     127.0.0.1
     database_port:     ~
-    database_name:     symfony
+    database_name:     vk-notify
     database_user:     root
     database_password: ~
     # You should uncomment this if you want use pdo_sqlite
@@ -17,4 +17,4 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
-    user_id: 12952306
+    user_id: 56952312
