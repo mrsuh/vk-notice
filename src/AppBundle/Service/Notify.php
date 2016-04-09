@@ -211,6 +211,8 @@ class Notify
                     $this->repo_community->update($community_id, ['status' => Community::STATUS_GROUP_JOINED]);
                     $joined_status = true;
                 }
+            } else {
+                $joined_status = true;
             }
         } else {
             $joined_status = true;

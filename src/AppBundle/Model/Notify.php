@@ -48,7 +48,7 @@ class Notify
                 [
                     'email' => $email,
                     'community' => $community_id,
-                    'needle' => $n
+                    'needle' => trim($n)
                 ]);
 
             if ($exist) {
