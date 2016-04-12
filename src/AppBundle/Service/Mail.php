@@ -57,9 +57,9 @@ class Mail
 
             $message = \Swift_Message::newInstance()
                 ->setSubject('Notificaton')
-                ->setFrom('notify@example.com', 'text/html')
+                ->setFrom('notify@vn.suntwirl.ru')
                 ->setTo($email)
-                ->setBody($body);
+                ->setBody($body, 'text/html');
 
             $this->mailer->send($message);
         }
