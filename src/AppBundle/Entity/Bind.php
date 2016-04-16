@@ -14,6 +14,7 @@ class Bind
 {
     const STATUS_ACTIVE = 1;
     const STATUS_DELETED = 0;
+
     /**
      * @var int
      *
@@ -30,16 +31,14 @@ class Bind
     private $community;
 
     /**
-     * @var int
-     *
-     * @ORM\Column(name="email", type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Email")
+     * @ORM\JoinColumn(name="email", referencedColumnName="id")
      */
     private $email;
 
     /**
-     * @var int
-     *
-     * @ORM\Column(name="needle", type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Needle")
+     * @ORM\JoinColumn(name="needle", referencedColumnName="id")
      */
     private $needle;
 

@@ -3,7 +3,9 @@
 namespace AppBundle\Service;
 
 use AppBundle\C;
+use AppBundle\Entity\Bind;
 use AppBundle\Entity\Community;
+use AppBundle\Entity\Needle;
 use Doctrine\ORM\EntityManager;
 use Mrsuh\VkApiBundle\Service\ApiService;
 
@@ -12,9 +14,8 @@ class Notify
     private $em;
     private $repo_community;
     private $repo_bind;
+    private $repo_needle;
     private $mail;
-    private $emails;
-    private $needles;
     private $api;
     private $user_id;
 
@@ -31,9 +32,8 @@ class Notify
         $this->api = $api;
         $this->repo_community = $em->getRepository(C::REPO_COMMUNITY);
         $this->repo_bind = $em->getRepository(C::REPO_BIND);
+        $this->repo_needle = $em->getRepository(C::REPO_NEEDLE);
         $this->mail = $mail;
-        $this->emails = [];
-        $this->needles = [];
         $this->user_id = $user_id;
     }
 
@@ -44,49 +44,45 @@ class Notify
     {
         $this->em->beginTransaction();
         try {
-            $this->init();
 
-            foreach ($this->repo_community->findAllAsArray() as $c) {
-                $community_id = $c['id'];
-                $group_id = $c['group_id'];
-                $topic_id = $c['topic_id'];
-                if (!array_key_exists($community_id, $this->needles)) {
+            foreach ($this->repo_community->findAll() as $community) {
+
+                $needles = $this->repo_needle->findByCommunity($community);
+
+                $this->checkCommunityInfo($community);
+
+                if (!$this->joinToCommunity($community)) {
                     continue;
                 }
 
-                if (!$this->joinToCommunity($community_id, $group_id, $c['status'])) {
-                    continue;
-                }
-
-                if ($c['last_comment_id']) {
-                    $last_comment_id = $c['last_comment_id'];
+                if ($community->getLastCommentId()) {
+                    $last_comment_id = $community->getLastCommentId();
                 } else {
-                    $last_comment_id = $this->getLastCommentIdRemote($group_id, $topic_id);
+                    $last_comment_id = $this->getLastCommentIdFromCommunity($community);
                 }
 
                 while (true) {
                     $response = $this->api->call('board.getComments', [
-                        'group_id' => $group_id,
-                        'topic_id' => $topic_id,
+                        'group_id' => $community->getGroupId(),
+                        'topic_id' => $community->getTopicId(),
                         'start_comment_id' => $last_comment_id,
                         'count' => '100'
                     ]);
 
                     $comments = $response['response']['items'];
 
-                    $search_result = $this->search($comments, $this->needles[$community_id]);
-
-                    $this->addToEmailBox($community_id, $search_result);
-
-                    $current_comment_id = $this->getLastCommentIdLocal($comments);
+                    $current_comment_id = $this->getLastCommentIdFromComments($comments);
                     if ($current_comment_id === $last_comment_id) {
                         break;
                     }
 
                     $last_comment_id = $current_comment_id;
+
+                    $this->handleComments($community, $needles, $comments);
+                    break;
                 }
 
-                $this->repo_community->update($community_id, ['last_comment_id' => $last_comment_id]);
+                $this->repo_community->update($community, ['last_comment_id' => $last_comment_id]);
             }
 
             $this->mail->send();
@@ -101,62 +97,19 @@ class Notify
     }
 
     /**
-     *
-     */
-    private function init()
-    {
-        foreach ($this->repo_bind->findAllAsArray() as $b) {
-            $community_id = $b['community_id'];
-            if (!array_key_exists($community_id, $this->needles)) {
-                $this->needles[$community_id] = [];
-            }
-            $this->needles[$community_id][] = $b['needle'];
-
-            $email = $b['email'];
-            if (!array_key_exists($email, $this->emails)) {
-                $this->emails[$email] = [];
-            }
-            $this->emails[$email][] = $b['needle'];
-        }
-    }
-
-    /**
      * @param array $comments
-     * @param array $needles
+     * @param array Needle[]
      * @return array
      */
-    private function search(array $comments, array $needles)
+    private function handleComments(Community $community, array &$needles, array &$comments)
     {
-        $result = [];
         foreach ($needles as $needle) {
             foreach ($comments as $comment) {
-                if (false !== strrpos(mb_strtolower($comment['text']), mb_strtolower($needle))) {
-                    if (!array_key_exists($needle, $result)) {
-                        $result[$needle] = [];
-                    }
-                    $result[$needle][] = $comment;
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param $community_id
-     * @param array $result
-     */
-    private function addToEmailBox($community_id, array $result)
-    {
-
-        foreach ($this->emails as $email => $needles) {
-            foreach ($needles as $needle) {
-
-                if (!array_key_exists($needle, $result)) {
+                if (false === strrpos(mb_strtolower($comment['text']), $needle->getNeedle())) {
                     continue;
                 }
 
-                $this->mail->addToBox($email, $community_id, $needle, $result[$needle]);
+                $this->mail->addToMailBox($community, $needle, $comment);
             }
         }
     }
@@ -165,23 +118,22 @@ class Notify
      * @param array $comments
      * @return int
      */
-    private function getLastCommentIdLocal(array $comments)
+    private function getLastCommentIdFromComments(array $comments)
     {
         $comment = array_pop($comments);
         return (integer)$comment['id'];
     }
 
     /**
-     * @param $group_id
-     * @param $topic_id
+     * @param Community $community
      * @return int
      * @throws \Mrsuh\VkApiBundle\Exception\VkApiRequestException
      */
-    private function getLastCommentIdRemote($group_id, $topic_id)
+    private function getLastCommentIdFromCommunity(Community $community)
     {
         $comments = $this->api->call('board.getComments', [
-            'group_id' => $group_id,
-            'topic_id' => $topic_id,
+            'group_id' => $community->getGroupId(),
+            'topic_id' => $community->getTopicId(),
             'sort' => 'desc',
             'count' => '20'
         ]);
@@ -191,33 +143,69 @@ class Notify
     }
 
     /**
-     * @param $community_id
-     * @param $group_id
-     * @param $status
+     * @param Community $community
      * @return bool
      * @throws \Mrsuh\VkApiBundle\Exception\VkApiRequestException
      */
-    private function joinToCommunity($community_id, $group_id, $status)
+    private function joinToCommunity(Community $community)
     {
-        $joined_status = false;
-        if (Community::STATUS_GROUP_NOT_JOINED === $status) {
+        $join_status = false;
 
-            $joined = $this->api->call('groups.isMember', ['group_id' => $group_id, 'user_id' => $this->user_id]);
-
-            if (1 !== $joined['response']) {
-                $join = $this->api->call('groups.join', ['group_id' => $group_id]);
+        switch($community->getStatus()){
+            case Community::STATUS_GROUP_JOINED:
+                $join_status = true;
+                break;
+            case Community::STATUS_GROUP_NOT_JOINED:
+                $join = $this->api->call('groups.join', ['group_id' => $community->getGroupId()]);
 
                 if (1 === $join['response']) {
-                    $this->repo_community->update($community_id, ['status' => Community::STATUS_GROUP_JOINED]);
-                    $joined_status = true;
+                    $this->repo_community->update($community, ['status' => Community::STATUS_GROUP_JOINED]);
+                    $join_status = true;
+                } else {
+                    $this->repo_community->update($community, ['status' => Community::STATUS_GROUP_NOT_JOINED]);
                 }
-            } else {
-                $joined_status = true;
-            }
-        } else {
-            $joined_status = true;
+                break;
+            case null:
+                $is_member = $this->api->call('groups.isMember', [
+                    'group_id' => $community->getGroupId(),
+                    'user_id' => $this->user_id
+                ]);
+
+                if (1 === $is_member['response']) {
+                    $this->repo_community->update($community, ['status' => Community::STATUS_GROUP_JOINED]);
+                    $join_status = true;
+                }
+                break;
+            default:
+                $join_status = false;
+
         }
 
-        return $joined_status;
+       return $join_status;
+    }
+
+    private function checkCommunityInfo(Community $community)
+    {
+        if($community->getGroupName() && $community->getTopicName()){
+            return false;
+        }
+
+        $response = $this->api->call('board.getTopics', [
+            'group_id' => $community->getGroupId(),
+            'topic_ids' => [$community->getTopicId()]
+        ]);
+
+        $topic_name = $response['response']['items'][0]['title'];
+
+        $response = $this->api->call('groups.getById', [
+            'group_id' => $community->getGroupId()
+        ]);
+
+        $group_name =  $response['response'][0]['name'];
+
+        $this->repo_community->update($community, [
+            'group_name' => $group_name,
+            'topic_name' => $topic_name
+        ]);
     }
 }

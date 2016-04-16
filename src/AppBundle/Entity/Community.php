@@ -33,9 +33,23 @@ class Community
     /**
      * @var string
      *
+     * @ORM\Column(name="group_name", type="string", length=255, nullable=true)
+     */
+    private $groupName;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="topic_id", type="integer")
      */
     private $topicId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="topic_name", type="string", length=255, nullable=true)
+     */
+    private $topicName;
 
     /**
      * @var string
@@ -130,6 +144,42 @@ class Community
     public function setStatus($status)
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroupName()
+    {
+        return $this->groupName;
+    }
+
+    /**
+     * @param string $groupName
+     */
+    public function setGroupName($groupName)
+    {
+        $this->groupName = $groupName;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTopicName()
+    {
+        return $this->topicName;
+    }
+
+    /**
+     * @param string $topicName
+     */
+    public function setTopicName($topicName)
+    {
+        $this->topicName = $topicName;
 
         return $this;
     }

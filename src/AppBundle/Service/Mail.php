@@ -2,6 +2,10 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\C;
+use AppBundle\Entity\Community;
+use AppBundle\Entity\Needle;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 
 class Mail
@@ -9,42 +13,43 @@ class Mail
     private $box;
     private $mailer;
     private $template;
+    private $repo_email;
 
     /**
      * Mail constructor.
      * @param \Swift_Mailer $mailer
      * @param TwigEngine $template
      */
-    public function __construct(\Swift_Mailer $mailer, TwigEngine $template)
+    public function __construct(EntityManager $em, \Swift_Mailer $mailer, TwigEngine $template)
     {
+        $this->repo_email = $em->getRepository(C::REPO_EMAIL);
         $this->mailer = $mailer;
         $this->template = $template;
         $this->box = [];
     }
 
     /**
-     * @param $email
-     * @param $community_id
-     * @param $needle
-     * @param array $comments
+     * @param Community $community
+     * @param Needle $needle
+     * @param array $comment
      */
-    public function addToBox($email, $community_id, $needle, array $comments)
+    public function addToMailBox(Community $community, Needle $needle, array $comment)
     {
-        if (!array_key_exists($email, $this->box)) {
-            $this->box[$email] = [];
+        $email = $this->repo_email->findByCommunityAndNeedle($community, $needle);
+
+        if (!array_key_exists($email->getEmail(), $this->box)) {
+            $this->box[$email->getEmail()] = [];
         }
 
-        if (!array_key_exists($community_id, $this->box[$email])) {
-            $this->box[$email][$community_id] = [];
+        if (!array_key_exists($community->getTopicName(), $this->box[$email->getEmail()])) {
+            $this->box[$email->getEmail()][$community->getTopicName()] = [];
         }
 
-        if (!array_key_exists($needle, $this->box[$email][$community_id])) {
-            $this->box[$email][$community_id][$needle] = [];
+        if (!array_key_exists($needle->getId(), $this->box[$email->getEmail()][$community->getTopicName()])) {
+            $this->box[$email->getEmail()][$community->getTopicName()][$needle->getNeedle()] = [];
         }
 
-        foreach ($comments as $c) {
-            $this->box[$email][$community_id][$needle][] = $c;//todo
-        }
+        $this->box[$email->getEmail()][$community->getTopicName()][$needle->getNeedle()][] = $comment;
     }
 
     /**
@@ -56,8 +61,8 @@ class Mail
             $body = $this->template->render('AppBundle:Email:notification.html.twig', ['letter' => $letter]);
 
             $message = \Swift_Message::newInstance()
-                ->setSubject('Notificaton')
-                ->setFrom('notify@example.com', 'text/html')
+                ->setSubject('VK Notify')
+                ->setFrom('notify@vn.suntwirl.ru', 'text/html')
                 ->setTo($email)
                 ->setBody($body);
 

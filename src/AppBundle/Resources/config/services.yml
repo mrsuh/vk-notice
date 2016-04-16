@@ -5,7 +5,7 @@ services:
 
     service.mail:
         class: 'AppBundle\Service\Mail'
-        arguments: ["@mailer", "@templating"]
+        arguments: ["@doctrine.orm.entity_manager", "@mailer", "@templating"]
 
     model.notify:
         class: 'AppBundle\Model\Notify'

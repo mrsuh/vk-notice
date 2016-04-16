@@ -4,16 +4,131 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 </head>
+<style>
+    body {
+        width: 90%;
+        margin-right: auto;
+        margin-left: auto;
+        color: #383434;
+        font-weight: bold;
+        font-size: 16px;
+        font-family: 'PT Sans', Helvetica Neue, Helvetica, Lucida Grande, tahoma, verdana, arial, sans-serif;
+    }
+
+    .width {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .photo {
+        width: 100%;
+        font-size: 0;
+    }
+
+    .photo img {
+        box-sizing: border-box;
+        padding: 5px;
+        width: 50%;
+        height: auto;
+    }
+
+    .logo {
+        padding-top: 20px;
+        display: block;
+        font-size: 30px;
+    }
+
+    .logo a {
+        text-decoration: none;
+        color: #383434;
+    }
+
+    .logo .small {
+        display: block;
+        color: #C2BFB8;
+        font-size: 14px;
+        padding-bottom: 20px;
+    }
+
+    hr {
+        border: none;
+        color: #E0DDD5;
+        background-color: #E0DDD5;
+        height: 2px;
+    }
+
+    span.selected {
+        color: #7292bd;
+    }
+
+    .footer {
+        padding-top: 20px;
+        padding-bottom: 20px;
+        height: 50px;
+    }
+
+    .footer span {
+        color: #C2BFB8;
+        display: block;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .community, .needle {
+        width: 50%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
 <body>
-{% for community in letter %}
-    {% for needle,comments in  community %}
-        <div style="background-color: #99CDD8; margin-bottom: 20px;">Слово: {{ needle }}</div>
+
+<div class="logo">
+    <a href="http://vn.suntwirl.ru"><span class="selected width">VK</span> NOTIFY</a>
+    <span class="small width">уведомления из сообществ vk</span>
+</div>
+<hr>
+
+{% for community_name, community in letter %}
+
+    <div class="community width"><span class="selected">Сообщество:</span> {{ community_name }} </div>
+
+    {% for needle, comments in  community %}
+
+        <div class="needle width"><span class="selected">Поиск по слову:</span> {{ needle }} </div>
+        <hr>
+
         {% for comment in comments %}
-            <div style="background-color: #99CDD8; margin-bottom: 20px;">
-                {{ comment.text }}
+
+            <div class="comment width">
+                <div>
+                    {{ comment.text }}
+                </div>
+
+                {% if comment.attachments is defined %}
+                    <div class="photo">
+                        {% for attach in comment.attachments %}
+                            {% if attach.photo is defined %}
+                                <img src="{{ attach.photo.photo_604 }}">
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
             </div>
+
+            <hr>
+
         {% endfor %}
+
     {% endfor %}
+
 {% endfor %}
+
+<div class="footer">
+    <span>Вы получили это письмо, поскольку подписаны на рассылку уведомлений из сообществ vk.</span>
+    <span>Отписаться</span>
+</div>
+
 </body>
 </html>

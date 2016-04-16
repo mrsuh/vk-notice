@@ -2,27 +2,58 @@
 
 namespace AppBundle\Repository;
 
-class CommunityRepository extends \Doctrine\ORM\EntityRepository
-{
-    public function findAllAsArray()
-    {
-        return $this->createQueryBuilder('c')
-            ->select('c.id as id')
-            ->addSelect('c.groupId as group_id')
-            ->addSelect('c.topicId as topic_id')
-            ->addSelect('c.lastCommentId as last_comment_id')
-            ->addSelect('c.status as status')
-            ->getQuery()->getResult();
-    }
+use AppBundle\Entity\Community;
 
+class CommunityRepository extends GeneralRepository
+{
     public function create(array $data)
     {
-        $this->_em->getConnection()->insert('community', $data);
-        return $this->_em->getConnection()->lastInsertId();
+        $this->_em->beginTransaction();
+        try {
+            $obj = new Community();
+
+            $this->setParams($obj, [
+                'group_id',
+                'topic_id',
+                'last_comment_id',
+                'status',
+                'group_name',
+                'topic_name',
+            ], $data);
+
+            $this->_em->persist($obj);
+
+            $this->_em->flush($obj);
+            $this->_em->commit();
+        } catch (\Exception $e) {
+            $this->_em->rollback();
+            throw $e;
+        }
+
+        return $obj;
     }
 
-    public function update($id, array $data)
+    public function update(Community $obj, array $data)
     {
-        $this->_em->getConnection()->update('community', $data, ['id' => $id]);
+        $this->_em->beginTransaction();
+        try {
+
+            $this->setParams($obj, [
+                'last_comment_id',
+                'status',
+                'group_name',
+                'topic_name'
+            ], $data);
+
+            $this->_em->persist($obj);
+
+            $this->_em->flush($obj);
+            $this->_em->commit();
+        } catch (\Exception $e) {
+            $this->_em->rollback();
+            throw $e;
+        }
+
+        return $obj;
     }
 }
