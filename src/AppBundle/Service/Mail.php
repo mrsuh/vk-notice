@@ -62,11 +62,13 @@ class Mail
 
             $message = \Swift_Message::newInstance()
                 ->setSubject('VK Notify')
-                ->setFrom('notify@vn.suntwirl.ru', 'text/html')
+                ->setFrom('notify@vn.suntwirl.ru')
                 ->setTo($email)
                 ->setBody($body, 'text/html');
 
-            $this->mailer->send($message);
+
+            file_put_contents('email', $body);
+//            $this->mailer->send($message);
         }
     }
 }

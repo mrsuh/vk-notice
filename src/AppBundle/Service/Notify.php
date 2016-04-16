@@ -82,7 +82,7 @@ class Notify
                     break;
                 }
 
-                $this->repo_community->update($community, ['last_comment_id' => $last_comment_id]);
+//                $this->repo_community->update($community, ['last_comment_id' => $last_comment_id]);
             }
 
             $this->mail->send();
