@@ -7,18 +7,25 @@
 <body style="width: 90%;margin-right: auto;margin-left: auto;color: #383434;font-weight: bold;font-size: 16px;font-family: 'PT Sans', Helvetica Neue, Helvetica, Lucida Grande, tahoma, verdana, arial, sans-serif;">
 
 <div class="logo" style="padding-top: 20px;padding-bottom: 20px">
-    <a href="http://vn.suntwirl.ru" style="padding-left: 15px;padding-right: 15px;text-decoration: none;color: #383434;display: block;font-size: 30px;"><span class="selected width" style="color: #7292bd;">VK</span> NOTIFY</a>
-    <span class="small width" style="padding-left: 15px;padding-right: 15px;display: block;color: #C2BFB8;font-size: 14px;;">уведомления из сообществ vk</span>
+    <a href="http://vn.suntwirl.ru"
+       style="padding-left: 15px;padding-right: 15px;text-decoration: none;color: #383434;display: block;font-size: 30px;"><span
+                class="selected width" style="color: #7292bd;">VK</span> NOTIFY</a>
+    <span class="small width"
+          style="padding-left: 15px;padding-right: 15px;display: block;color: #C2BFB8;font-size: 14px;;">уведомления из сообществ vk</span>
 </div>
 <hr style="border: none;color: #E0DDD5;background-color: #E0DDD5;height: 2px;">
 
 {% for community_name, community in letter %}
 
-    <div class="community width" style="padding-left: 15px;padding-right: 15px;"><span class="selected" style="color: #7292bd;">Сообщество:</span> {{ community_name }} </div>
+    <div class="community width" style="padding-left: 15px;padding-right: 15px;"><span class="selected"
+                                                                                       style="color: #7292bd;">Сообщество:</span> {{ community_name }}
+    </div>
 
     {% for needle, comments in  community %}
 
-        <div class="needle width" style="padding-left: 15px;padding-right: 15px;"><span class="selected" style="color: #7292bd;">Поиск по слову:</span> {{ needle }} </div>
+        <div class="needle width" style="padding-left: 15px;padding-right: 15px;"><span class="selected"
+                                                                                        style="color: #7292bd;">Поиск по слову:</span> {{ needle }}
+        </div>
         <hr style="border: none;color: #E0DDD5;background-color: #E0DDD5;height: 2px;">
 
         {% for comment in comments %}
@@ -30,10 +37,13 @@
 
                 {% if comment.attachments is defined %}
                     <div class="photo" style="width: 100%;">
-                        {% for attach in comment.attachments %}
+                        {% for key, attach in comment.attachments %}
+
                             {% if attach.photo is defined %}
-                                <img src="{{ attach.photo.photo_604 }}" style="padding: 5px; width: 50%; height: auto; font-size: 0;box-sizing: border-box; vertical-align: top">
+                                <img src="{{ attach.photo.photo_604 }}"
+                                     style="width: 50%; height: auto; font-size: 0;vertical-align: top; display: inline-block">
                             {% endif %}
+
                         {% endfor %}
                     </div>
                 {% endif %}
