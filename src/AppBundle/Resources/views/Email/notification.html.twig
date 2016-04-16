@@ -32,7 +32,7 @@
                     <div class="photo" style="width: 100%;">
                         {% for attach in comment.attachments %}
                             {% if attach.photo is defined %}
-                                <img src="{{ attach.photo.photo_604 }}" style="box-sizing: border-box; padding: 5px; width: 50%; height: auto; font-size: 0;">
+                                <img src="{{ attach.photo.photo_604 }}" style="padding: 5px; width: 50%; height: auto; font-size: 0;box-sizing: border-box; vertical-align: top">
                             {% endif %}
                         {% endfor %}
                     </div>
