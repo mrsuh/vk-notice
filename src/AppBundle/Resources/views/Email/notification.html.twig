@@ -4,33 +4,33 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 </head>
-<body style="width: 90%;margin-right: auto;margin-left: auto;color: #383434;font-weight: bold;font-size: 16px;font-family: 'PT Sans', Helvetica Neue, Helvetica, Lucida Grande, tahoma, verdana, arial, sans-serif;">
+<body style="width: 96%;margin-right: auto;margin-left: auto;color: #383434;font-weight: bold;font-size: 16px;font-family: 'PT Sans', Helvetica Neue, Helvetica, Lucida Grande, tahoma, verdana, arial, sans-serif;">
 
 <div class="logo" style="padding-top: 20px;padding-bottom: 20px">
     <a href="http://vn.suntwirl.ru"
-       style="padding-left: 15px;padding-right: 15px;text-decoration: none;color: #383434;display: block;font-size: 30px;"><span
+       style="padding-left: 2%;padding-right: 2%;text-decoration: none;color: #383434;display: block;font-size: 30px;"><span
                 class="selected width" style="color: #7292bd;">VK</span> NOTIFY</a>
     <span class="small width"
-          style="padding-left: 15px;padding-right: 15px;display: block;color: #C2BFB8;font-size: 14px;;">уведомления из сообществ vk</span>
+          style="padding-left: 2%;padding-right: 2%;display: block;color: #C2BFB8;font-size: 14px;;">уведомления из сообществ vk</span>
 </div>
 <hr style="border: none;color: #E0DDD5;background-color: #E0DDD5;height: 2px;">
 
 {% for community_name, community in letter %}
 
-    <div class="community width" style="padding-left: 15px;padding-right: 15px;"><span class="selected"
+    <div class="community width" style="padding-left: 2%;padding-right: 2%;"><span class="selected"
                                                                                        style="color: #7292bd;">Сообщество:</span> {{ community_name }}
     </div>
 
     {% for needle, comments in  community %}
 
-        <div class="needle width" style="padding-left: 15px;padding-right: 15px;"><span class="selected"
+        <div class="needle width" style="padding-left: 2%;padding-right: 2%;"><span class="selected"
                                                                                         style="color: #7292bd;">Поиск по слову:</span> {{ needle }}
         </div>
         <hr style="border: none;color: #E0DDD5;background-color: #E0DDD5;height: 2px;">
 
         {% for comment in comments %}
 
-            <div class="comment width" style="padding-left: 15px;padding-right: 15px;">
+            <div class="comment width" style="padding-left: 2%;padding-right: 2%;">
                 <div>
                     {{ comment.text }}
                 </div>
@@ -58,7 +58,7 @@
 
 {% endfor %}
 
-<div class="footer" style=" padding-top: 20px;padding-bottom: 20px;height: 50px;">
+<div class="footer" style="padding-top: 20px;padding-bottom: 20px;height: 50px;">
     <span style=" color: #C2BFB8;display: block;font-size: 14px;text-align: center;">Вы получили это письмо, поскольку подписаны на рассылку уведомлений из сообществ vk.</span>
     <span style=" color: #C2BFB8;display: block;font-size: 14px;text-align: center;">Отписаться</span>
 </div>
