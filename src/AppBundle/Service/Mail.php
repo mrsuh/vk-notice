@@ -64,7 +64,7 @@ class Mail
                 ->setSubject('VK Notify')
                 ->setFrom('notify@vn.suntwirl.ru', 'text/html')
                 ->setTo($email)
-                ->setBody($body);
+                ->setBody($body, 'text/html');
 
             $this->mailer->send($message);
         }
