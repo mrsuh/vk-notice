@@ -66,9 +66,7 @@ class Mail
                 ->setTo($email)
                 ->setBody($body, 'text/html');
 
-
-            file_put_contents('email', $body);
-//            $this->mailer->send($message);
+            $this->mailer->send($message);
         }
     }
 }
