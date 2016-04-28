@@ -1,3 +1,16 @@
+html{
+    font-family: 'PT Sans', Helvetica Neue, Helvetica, Lucida Grande, tahoma, verdana, arial, sans-serif;
+    background: linear-gradient(270deg, #3e29e6, #0dca25);
+    font-size: 16px;
+}
+.logo{
+    font-size: 30px;
+    color: #383434;
+}
+.logo .selected {
+    color: #7292bd;
+}
+
 .form {
     width: 400px;
     margin-top: 200px;
@@ -35,15 +48,17 @@
     -ms-touch-action: manipulation;
     touch-action: manipulation;
     cursor: pointer;
-    border: 1px solid transparent;
+    border: 1px solid #4E6482;
     white-space: nowrap;
     padding: 10px 18px;
-    font-size: 15px;
     line-height: 1.42857143;
     border-radius: 0;
     color: #fff;
-    background-color: #2780e3;
-    border-color: #2780e3;
+    background-color: #4E6482;
+}
+
+.form button:hover{
+    background-color: #7292bd;
 }
 
 .form input.error  {

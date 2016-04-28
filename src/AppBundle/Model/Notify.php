@@ -11,6 +11,8 @@ class Notify
 {
     private $repo_community;
     private $repo_bind;
+    private $repo_email;
+    private $repo_needle;
 
     /**
      * Notify constructor.
@@ -20,35 +22,44 @@ class Notify
     {
         $this->repo_community = $em->getRepository(C::REPO_COMMUNITY);
         $this->repo_bind = $em->getRepository(C::REPO_BIND);
+        $this->repo_email = $em->getRepository(C::REPO_EMAIL);
+        $this->repo_needle = $em->getRepository(C::REPO_NEEDLE);
     }
 
     /**
-     * @param $email
+     * @param $email_str
      * @param $link
-     * @param $needle
+     * @param $needle_str
      */
-    public function register($email, $link, $needle)
+    public function register($email_str, $link, $needle_str)
     {
         preg_match('/topic-([0-9]+)_([0-9]+)/', $link, $matches);
-        $community_id = $this->getCommunityId($matches[1], $matches[2]);
-        $needles = explode(',', mb_strtolower($needle));
+        $needle_strs = explode(',', mb_strtolower($needle_str));
 
-        $this->setBind($email, $community_id, $needles);
+        $email = $this->getEmail($email_str);
+
+        $community = $this->getCommunity($matches[1], $matches[2]);
+
+        $this->setBind($email, $community, $needle_strs);
     }
 
     /**
      * @param $email
-     * @param $community_id
-     * @param array $needles
+     * @param $community
+     * @param array $needle_strs
+     * @throws \Exception
      */
-    private function setBind($email, $community_id, array $needles)
+    private function setBind($email, $community, array $needle_strs)
     {
-        foreach ($needles as $n) {
+        foreach ($needle_strs as $needle_str) {
+
+            $needle = $this->getNeedle(trim($needle_str));
+
             $exist = $this->repo_bind->findOneBy(
                 [
                     'email' => $email,
-                    'community' => $community_id,
-                    'needle' => trim($n)
+                    'community' => $community,
+                    'needle' => $needle
                 ]);
 
             if ($exist) {
@@ -70,11 +81,44 @@ class Notify
     }
 
     /**
+     * @param $needle_str
+     * @return \AppBundle\Entity\Needle|null|object
+     * @throws \Exception
+     */
+    private function getNeedle($needle_str)
+    {
+        $needle = $this->repo_needle->findOneBy(['needle' => $needle_str]);
+
+        if (!$needle) {
+            $needle = $this->repo_needle->create(['needle' => $needle_str]);
+        }
+
+        return $needle;
+    }
+
+    /**
+     * @param $email_str
+     * @return \AppBundle\Entity\Email|null|object
+     * @throws \Exception
+     */
+    private function getEmail($email_str)
+    {
+        $email = $this->repo_email->findOneBy(['email' => $email_str]);
+
+        if (!$email) {
+            $email = $this->repo_email->create(['email' => $email_str]);
+        }
+
+        return $email;
+    }
+
+    /**
      * @param $group_id
      * @param $topic_id
-     * @return int|string
+     * @return Community|null|object
+     * @throws \Exception
      */
-    private function getCommunityId($group_id, $topic_id)
+    private function getCommunity($group_id, $topic_id)
     {
         $community = $this->repo_community->findOneBy(
             [
@@ -83,17 +127,15 @@ class Notify
             ]);
 
         if (!$community) {
-            $community_id = $this->repo_community->create(
+            $community = $this->repo_community->create(
                 [
                     'group_id' => $group_id,
                     'topic_id' => $topic_id,
                     'status' => Community::STATUS_GROUP_NOT_JOINED
                 ]);
-        } else {
-            $community_id = $community->getId();
         }
 
-        return $community_id;
+        return $community;
     }
 
     /**

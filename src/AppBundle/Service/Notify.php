@@ -165,17 +165,6 @@ class Notify
                     $this->repo_community->update($community, ['status' => Community::STATUS_GROUP_NOT_JOINED]);
                 }
                 break;
-            case null:
-                $is_member = $this->api->call('groups.isMember', [
-                    'group_id' => $community->getGroupId(),
-                    'user_id' => $this->user_id
-                ]);
-
-                if (1 === $is_member['response']) {
-                    $this->repo_community->update($community, ['status' => Community::STATUS_GROUP_JOINED]);
-                    $join_status = true;
-                }
-                break;
             default:
                 $join_status = false;
 

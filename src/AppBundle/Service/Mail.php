@@ -35,21 +35,23 @@ class Mail
      */
     public function addToMailBox(Community $community, Needle $needle, array $comment)
     {
-        $email = $this->repo_email->findByCommunityAndNeedle($community, $needle);
+        $emails = $this->repo_email->findByCommunityAndNeedle($community, $needle);
 
-        if (!array_key_exists($email->getEmail(), $this->box)) {
-            $this->box[$email->getEmail()] = [];
+        foreach($emails as $email) {
+            if (!array_key_exists($email->getEmail(), $this->box)) {
+                $this->box[$email->getEmail()] = [];
+            }
+
+            if (!array_key_exists($community->getTopicName(), $this->box[$email->getEmail()])) {
+                $this->box[$email->getEmail()][$community->getTopicName()] = [];
+            }
+
+            if (!array_key_exists($needle->getId(), $this->box[$email->getEmail()][$community->getTopicName()])) {
+                $this->box[$email->getEmail()][$community->getTopicName()][$needle->getNeedle()] = [];
+            }
+
+            $this->box[$email->getEmail()][$community->getTopicName()][$needle->getNeedle()][] = $comment;
         }
-
-        if (!array_key_exists($community->getTopicName(), $this->box[$email->getEmail()])) {
-            $this->box[$email->getEmail()][$community->getTopicName()] = [];
-        }
-
-        if (!array_key_exists($needle->getId(), $this->box[$email->getEmail()][$community->getTopicName()])) {
-            $this->box[$email->getEmail()][$community->getTopicName()][$needle->getNeedle()] = [];
-        }
-
-        $this->box[$email->getEmail()][$community->getTopicName()][$needle->getNeedle()][] = $comment;
     }
 
     /**

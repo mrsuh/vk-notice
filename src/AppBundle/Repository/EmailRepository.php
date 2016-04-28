@@ -37,6 +37,6 @@ class EmailRepository extends GeneralRepository
               JOIN AppBundle\Entity\Bind bind WITH bind.email = email.id
               WHERE bind.community = :community_id AND bind.needle = :needle_id'
         )->setParameters(['community_id' => $community->getId(), 'needle_id' => $needle->getId()])
-            ->getSingleResult();
+            ->getResult();
     }
 }

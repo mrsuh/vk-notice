@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="{{ asset('style/common.css') }}">
 </head>
 <body>
+
+<span class="logo"><span class="selected">VK</span> NOTIFY</span>
+
 <div class="description"></div>
 <div class="form">
     <input type="text" id="link" placeholder="https://vk.com/topic-12469956_33400152" onkeydown="onChange(this)">
@@ -74,7 +77,6 @@
 
         xhr.open("POST", '{{ path('notify') }}', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
 
         xhr.send(body);
     };
