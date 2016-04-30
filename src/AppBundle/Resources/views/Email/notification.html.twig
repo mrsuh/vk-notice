@@ -17,14 +17,12 @@
 
 {% for community_name, community in letter %}
 
-    <div class="community width" style="padding-left: 2%;padding-right: 2%;"><span class="selected"
-                                                                                       style="color: #7292bd;">Сообщество:</span> {{ community_name }}
-    </div>
+    <div class="community width" style="padding-left: 2%;padding-right: 2%;"><span class="selected" style="color: #7292bd;">Сообщество:</span> {{ community_name }}</div>
 
     {% for needle, comments in  community %}
 
         <div class="needle width" style="padding-left: 2%;padding-right: 2%;"><span class="selected"
-                                                                                        style="color: #7292bd;">Поиск по слову:</span> {{ needle }}
+                                                                                    style="color: #7292bd;">Поиск по слову:</span> {{ needle }}
         </div>
         <hr style="border: none;color: #E0DDD5;background-color: #E0DDD5;height: 2px;">
 
@@ -41,7 +39,7 @@
 
                             {% if attach.photo is defined %}
                                 <img src="{{ attach.photo.photo_604 }}"
-                                     style="width: 50%; height: auto; font-size: 0;vertical-align: top; display: inline-block">
+                                     style="width: 100%; height: auto;">
                             {% endif %}
 
                         {% endfor %}
