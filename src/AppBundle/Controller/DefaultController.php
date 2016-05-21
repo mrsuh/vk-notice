@@ -5,12 +5,16 @@ namespace AppBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Yaml\Parser;
 
 class DefaultController extends Controller
 {
     public function indexAction()
     {
-        return $this->render('AppBundle:Default:index.html.twig');
+        $parser = new Parser();
+        $un = $parser->parse(file_get_contents($this->get('kernel')->getRootDir(). '/fixtures/underground.yml') );
+
+        return $this->render('AppBundle:Default:index.html.twig', ['undergounds' => $un]);
     }
 
     public function notifyAction(Request $request)

@@ -1,7 +1,7 @@
 services:
     service.notify:
         class: 'AppBundle\Service\Notify'
-        arguments: ["@doctrine.orm.entity_manager", "@mrsuh_vk_api", "@service.mail", "%user_id%"]
+        arguments: ["@doctrine.orm.entity_manager", "@mrsuh_vk_api", "@service.mail", "%vk.user_id%"]
 
     service.mail:
         class: 'AppBundle\Service\Mail'

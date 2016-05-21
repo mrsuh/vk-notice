@@ -70,9 +70,9 @@ swiftmailer:
 
 
 mrsuh_vk_api:
-    app_id: '5238737'
-    username: 'mrsuh@mail.ru'
-    password: 'YGwEQhenea13HqXbSrQz'
+    app_id: '%vk.app_id%'
+    username: '%vk.username%'
+    password: '%vk.password%'
     scope:
         - 'friends'
         - 'photos'
