@@ -1,12 +1,29 @@
 services:
     service.notify:
         class: 'AppBundle\Service\Notify'
-        arguments: ["@doctrine.orm.entity_manager", "@mrsuh_vk_api", "@service.mail", "%vk.user_id%"]
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@mrsuh_vk_api"
+            - "@service.mail"
+            - "@storage.handled_comment"
+            - "@storage.comment"
+            - "%vk.user_id%"
 
     service.mail:
         class: 'AppBundle\Service\Mail'
-        arguments: ["@doctrine.orm.entity_manager", "@mailer", "@templating"]
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@templating"
+            - "@storage.comment"
+            - "@storage.handled_comment"
+
 
     model.notify:
         class: 'AppBundle\Model\Notify'
         arguments: ["@doctrine.orm.entity_manager"]
+
+    storage.comment:
+        class: 'AppBundle\Storage\CommentStorage'
+
+    storage.handled_comment:
+        class: 'AppBundle\Storage\HandledCommentStorage'

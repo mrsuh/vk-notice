@@ -19,7 +19,7 @@
 
     <div class="info">
         <p>Искать жилье стало проще!</p>
-        <p>Получай моментальные уведомления о сдаче жилья из популярных групп соцсети VK.com на свой почтовый ящик.</p>
+        <p>Получай моментальные уведомления о сдаче жилья из популярных групп соцсети VK.com на свой почтовый ящик</p>
         <p>Как это работает?</p>
         <ul>
             <li>Выбери необходимый тип жилья</li>
@@ -28,8 +28,8 @@
             <li>Нажми кнопку "подписаться"</li>
             <li>Готово!</li>
         </ul>
-        <p>Как только будет размещенно объявление, удовлетворяющее условиям вашего жилья, вам будет выслано сообщение
-            на почтовый адрес с его содержимым</p>
+        <p>Как только будет размещенно объявление, которое вам подходит, оно будет выслано
+            на ваш почтовый ящик</p>
     </div>
 
     <div class="fields">
@@ -42,10 +42,10 @@
 
                     <div class="inner-block">
                         <ul>
-                            {% for key, underground in undergounds %}
+                            {% for subway in subways %}
                                 <li>
-                                    <input id="underground-{{ key }}" type="checkbox">
-                                    <label for="underground-{{ key }}">{{ underground }}</label>
+                                    <input id="underground-{{ subway.id }}" type="checkbox" value="{{ subway.id }}">
+                                    <label for="underground-{{ subway.id }}">{{ subway.name }}</label>
                                 </li>
                             {% endfor %}
                         </ul>

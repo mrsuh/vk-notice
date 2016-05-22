@@ -27,6 +27,12 @@ class Needle
     private $needle;
 
     /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Subway")
+     * @ORM\JoinColumn(name="subway", referencedColumnName="id")
+     */
+    private $subway;
+
+    /**
      * Get id
      *
      * @return int
@@ -50,6 +56,24 @@ class Needle
     public function setNeedle($needle)
     {
         $this->needle = $needle;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSubway()
+    {
+        return $this->subway;
+    }
+
+    /**
+     * @param mixed $subway
+     */
+    public function setSubway($subway)
+    {
+        $this->subway = $subway;
 
         return $this;
     }

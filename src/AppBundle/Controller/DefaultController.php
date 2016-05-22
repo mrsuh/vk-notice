@@ -2,19 +2,18 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\C;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Yaml\Parser;
 
 class DefaultController extends Controller
 {
     public function indexAction()
     {
-        $parser = new Parser();
-        $un = $parser->parse(file_get_contents($this->get('kernel')->getRootDir(). '/fixtures/underground.yml') );
-
-        return $this->render('AppBundle:Default:index.html.twig', ['undergounds' => $un]);
+        return $this->render('AppBundle:Default:index.html.twig', [
+            'subways' => $this->get('doctrine.orm.entity_manager')->getRepository(C::REPO_SUBWAY)->findAll()
+        ]);
     }
 
     public function notifyAction(Request $request)

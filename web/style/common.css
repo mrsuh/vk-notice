@@ -1,7 +1,8 @@
 body {
   margin: 0;
   font-size: 0;
-  font-family: 'Roboto Condensed', sans-serif;
+  font-weight: bold;
+  font-family: 'PT Sans', Helvetica Neue, Helvetica, Lucida Grande, tahoma, verdana, arial, sans-serif;
   height: 100vh;
   color: #1C1A1B;
 }
@@ -17,16 +18,17 @@ body {
   color: #383434;
 }
 .header h1 span.label-vk {
-  color: #0088CC;
+  color: #7292bd;
 }
 .header h1 span.label-spb {
-  color: #0088CC;
+  color: #7292bd;
 }
 .header span.subtext {
   margin: 0 0 0 35px;
   display: block;
   color: #C2BFB8;
   font-size: 16px;
+  font-weight: bold;
 }
 input[type=checkbox] {
   display: none;
@@ -44,7 +46,7 @@ input[type=checkbox] + label:before {
   margin-right: 3px;
 }
 input[type=checkbox]:checked + label:before {
-  background-color: #0088CC;
+  background-color: #7292bd;
 }
 .content {
   padding-top: 150px;
@@ -97,7 +99,7 @@ input[type=checkbox]:checked + label:before {
   display: inline-block;
   width: 50px;
   height: 50px;
-  background-color: #0088CC;
+  background-color: #7292bd;
   border-radius: 50%;
   border: 1px solid #ffffff;
   font-size: 20px;
@@ -147,7 +149,7 @@ input[type=checkbox]:checked + label:before {
   display: inline-block;
   width: 50px;
   height: 50px;
-  background-color: #0088CC;
+  background-color: #7292bd;
   border-radius: 50%;
   border: 1px solid #ffffff;
   font-size: 20px;
@@ -170,13 +172,13 @@ input[type=checkbox]:checked + label:before {
   text-align: center;
   touch-action: manipulation;
   cursor: pointer;
-  border: 1px solid #0088CC;
+  border: 1px solid #7292bd;
   white-space: nowrap;
   padding: 10px 20px;
   line-height: 1.42857143;
   border-radius: 0;
   color: #fff;
-  background-color: #0088CC;
+  background-color: #7292bd;
   font-weight: bold;
   font-size: 16px;
   width: 300px;
@@ -224,7 +226,7 @@ input[type=checkbox]:checked + label:before {
   display: inline-block;
   width: 50px;
   height: 50px;
-  background-color: #0088CC;
+  background-color: #7292bd;
   border-radius: 50%;
   border: 1px solid #ffffff;
   font-size: 20px;

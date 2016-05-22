@@ -2,14 +2,15 @@
 
 namespace AppBundle\Repository;
 
-use AppBundle\Entity\Email;
+use AppBundle\Entity\City;
 
-class EmailRepository extends GeneralRepository
+class CityRepository extends GeneralRepository
 {
     public function create(array $data)
     {
-        $obj = new Email();
+        $obj = new City();
         $this->setData($obj, $data);
         return $this->createObj($obj);
     }
+
 }
