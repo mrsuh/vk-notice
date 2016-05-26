@@ -84,7 +84,7 @@ class Notify
                     $this->handleComments($city, $needles, $comments);
                 }
 
-               // $this->repo_community->update($community, ['last_comment_id' => $last_comment_id]);
+               $this->repo_community->update($community, ['last_comment_id' => $last_comment_id]);
             }
 
             $this->mail->handle($city);
