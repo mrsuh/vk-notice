@@ -19,7 +19,7 @@ framework:
     form:            ~
     csrf_protection: ~
     validation:      { enable_annotations: true }
-    #serializer:      { enable_annotations: true }
+    serializer:      { enable_annotations: true }
     templating:
         engines: ['twig']
     default_locale:  "%locale%"
@@ -70,9 +70,9 @@ swiftmailer:
 
 
 mrsuh_vk_api:
-    app_id: '5238737'
-    username: 'mrsuh@mail.ru'
-    password: 'YGwEQhenea13HqXbSrQz'
+    app_id: '%vk.app_id%'
+    username: '%vk.username%'
+    password: '%vk.password%'
     scope:
         - 'friends'
         - 'photos'

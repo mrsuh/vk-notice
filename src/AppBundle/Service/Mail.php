@@ -3,72 +3,122 @@
 namespace AppBundle\Service;
 
 use AppBundle\C;
-use AppBundle\Entity\Community;
-use AppBundle\Entity\Needle;
+use AppBundle\Entity\Bind;
+use AppBundle\Entity\City;
+use AppBundle\Object\Email;
+use AppBundle\Object\HandledComment;
+use AppBundle\Object\Message;
+use AppBundle\Storage\CommentStorage;
+use AppBundle\Storage\HandledCommentStorage;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 
 class Mail
 {
-    private $box;
-    private $mailer;
     private $template;
-    private $repo_email;
+    private $repo_subway;
+    private $repo_bind;
+    private $storage_comment;
+    private $storage_handled_comments;
+    private $service_hash;
+    private $mailer;
 
-    /**
-     * Mail constructor.
-     * @param \Swift_Mailer $mailer
-     * @param TwigEngine $template
-     */
-    public function __construct(EntityManager $em, \Swift_Mailer $mailer, TwigEngine $template)
+    public function __construct(
+        EntityManager $em,
+        TwigEngine $template,
+        CommentStorage $storage_comment,
+        HandledCommentStorage $storage_handled_comments,
+        HashService $service_hash,
+        \Swift_Mailer $mailer
+    )
     {
-        $this->repo_email = $em->getRepository(C::REPO_EMAIL);
-        $this->mailer = $mailer;
+        $this->repo_subway = $em->getRepository(C::REPO_SUBWAY);
+        $this->repo_bind = $em->getRepository(C::REPO_BIND);
         $this->template = $template;
-        $this->box = [];
+        $this->storage_handled_comments = $storage_handled_comments;
+        $this->storage_comment = $storage_comment;
+        $this->service_hash = $service_hash;
+        $this->mailer = $mailer;
+        $this->subways = $em->getRepository(C::REPO_SUBWAY)->findAllNamesIndexById();
     }
 
-    /**
-     * @param Community $community
-     * @param Needle $needle
-     * @param array $comment
-     */
-    public function addToMailBox(Community $community, Needle $needle, array $comment)
+    public function handle(City $city)
     {
-        $emails = $this->repo_email->findByCommunityAndNeedle($community, $needle);
+        $emails = [];
+        foreach ($this->repo_bind->findBy(['city' => $city]) as $bind) {
 
-        foreach($emails as $email) {
-            if (!array_key_exists($email->getEmail(), $this->box)) {
-                $this->box[$email->getEmail()] = [];
+            if ($bind->getStatus() === Bind::STATUS_DELETED) {
+                continue;
             }
 
-            if (!array_key_exists($community->getTopicName(), $this->box[$email->getEmail()])) {
-                $this->box[$email->getEmail()][$community->getTopicName()] = [];
+            $email_id = $bind->getEmail()->getId();
+
+            if (!array_key_exists($email_id, $emails)) {
+                $emails[$email_id] = new Email();
+                $emails[$email_id]->setEmail($bind->getEmail());
             }
 
-            if (!array_key_exists($needle->getId(), $this->box[$email->getEmail()][$community->getTopicName()])) {
-                $this->box[$email->getEmail()][$community->getTopicName()][$needle->getNeedle()] = [];
+            $emails[$email_id]->addSubwayIdAndHomeType($bind->getSubway()->getId(), $bind->getHomeType());
+        }
+
+        $comment_objects = $this->storage_comment->getAll();
+        foreach ($emails as $email) {
+            $message = new Message();
+            $message->setEmail($email->getEmail()->getEmail());
+            $message->setEmailHashId($this->service_hash->encode($email->getEmail()->getId()));
+
+            $email_subway_ids = array_keys($email->getSubwayIdAndHomeType());
+            $email_subway_ids_and_home_types = $email->getSubwayIdAndHomeType();
+
+            foreach ($this->storage_handled_comments->getAll() as $handled_comment) {
+                $message_subway_ids = array_intersect($email_subway_ids, $handled_comment->getSubwayIds());
+
+                $home_type = null;
+                foreach ($message_subway_ids as $subway_id) {
+                    if (array_key_exists($subway_id, $email_subway_ids_and_home_types)) {
+                        $home_type = $email_subway_ids_and_home_types[$subway_id];
+                        break;
+                    }
+                }
+
+                if (null === $home_type) {
+                    continue;
+                }
+
+                if ($comment_objects[$handled_comment->getid()]->getType() !== $home_type) {
+                    continue;
+                }
+
+                if ($message_subway_ids) {
+                    $comment = new HandledComment($handled_comment->getId());
+                    $comment->setSubwayIds($message_subway_ids);
+                    $message->addComment($comment);
+                }
             }
 
-            $this->box[$email->getEmail()][$community->getTopicName()][$needle->getNeedle()][] = $comment;
+            if (!$message->isEmptyComments()) {
+                $this->send($message);
+            }
         }
     }
 
-    /**
-     * @throws \Twig_Error
-     */
-    public function send()
+    public function send(Message $message)
     {
-        foreach ($this->box as $email => $letter) {
-            $body = $this->template->render('AppBundle:Email:notification.html.twig', ['letter' => $letter]);
+        $body = $this->template->render('AppBundle:Email:notification.html.twig',
+            [
+                'handled_comments' => $message->getComments(),
+                'comments' => $this->storage_comment->getAll(),
+                'subways' => $this->subways,
+                'email_hash_id' => $message->getEmailHashId()
+            ]
+        );
 
-            $message = \Swift_Message::newInstance()
-                ->setSubject('VK Notify')
-                ->setFrom('notify@vn.suntwirl.ru')
-                ->setTo($email)
-                ->setBody($body, 'text/html');
+        $swift_message = \Swift_Message::newInstance()
+            ->setSubject('VK Notify')
+            ->setFrom('notify@vn.suntwirl.ru')
+            ->setTo($message->getEmail())
+            ->setBody($body, 'text/html');
 
-            $this->mailer->send($message);
-        }
+        $this->mailer->send($swift_message);
     }
 }

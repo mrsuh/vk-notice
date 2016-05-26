@@ -59,6 +59,12 @@ class Community
     private $lastCommentId;
 
     /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\City")
+     * @ORM\JoinColumn(name="city", referencedColumnName="id")
+     */
+    private $city;
+
+    /**
      * @var int
      *
      * @ORM\Column(name="status", type="smallint")
@@ -180,6 +186,24 @@ class Community
     public function setTopicName($topicName)
     {
         $this->topicName = $topicName;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCity()
+    {
+        return $this->city;
+    }
+
+    /**
+     * @param mixed $city
+     */
+    public function setCity($city)
+    {
+        $this->city = $city;
 
         return $this;
     }

@@ -17,4 +17,11 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
-    user_id: 56952312
+    vk.user_id: 56952312
+    vk.app_id: 5238737
+    vk.username: mrsuh@mail.ru
+    vk.password: YGwEQhenea13HqXbSrQz
+    hash.min_hash_length: 20
+    hash.alphabet: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890
+    hash.salt.unsubscribe: salt
+
