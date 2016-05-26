@@ -13,6 +13,8 @@ else
     php composer.phar install
 fi
 
+php bin/console app:assets:less
+
 if [ "1" = "$#" ] && [ "install" = "$1" ]; then
     sh bin/install;
 else

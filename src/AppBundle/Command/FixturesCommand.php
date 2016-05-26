@@ -28,16 +28,18 @@ class FixturesCommand extends ContainerAwareCommand
                 $city = $repo_city->create(['name' => $city_name]);
             }
 
-            foreach($subways as $subway_name) {
+            foreach($subways as $subway_name => $needles) {
                 $subway = $repo_subway->findOneBy(['city' => $city, 'name' => $subway_name]);
-                if(!$subway) {
+                if (!$subway) {
                     $subway = $repo_subway->create(['city' => $city, 'name' => $subway_name]);
                 }
 
-                $needle = $repo_needle->findOneBy(['subway' => $subway, 'needle' => $subway_name]);
+                foreach ($needles as $needle_name) {
+                    $needle = $repo_needle->findOneBy(['subway' => $subway, 'needle' => $needle_name]);
 
-                if(!$needle) {
-                    $needle = $repo_needle->create(['subway' => $subway, 'needle' => $subway_name]);
+                    if (!$needle) {
+                        $needle = $repo_needle->create(['subway' => $subway, 'needle' => $needle_name]);
+                    }
                 }
             }
         }

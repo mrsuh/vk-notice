@@ -17,6 +17,10 @@
 
 <div style="padding-left: 2%;padding-right: 2%;">
 
+    <div>
+        Для вас <span style="color: #7292bd;">{{ handled_comments | length }}</span> новых объявлений
+    </div>
+
     {% for handled_comment in handled_comments %}
 
         {% set comment = comments[handled_comment.getId()] %}
@@ -67,8 +71,6 @@
                 </div>
             {% endif %}
         </div>
-
-
 
     {% endfor %}
 

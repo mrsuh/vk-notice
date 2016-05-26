@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head lang="ru">
+    <base href="/">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1 maximum-scale=1 user-scalable=no">
+    <link rel="stylesheet" href="{{ asset('style/unsubscribe.css') }}">
+</head>
+<body>
+<div class="slider-front">
+    <div class="header">
+        <h1>
+            <span class="label-vk">VK</span>NOTE<span class="label-city">SPB</span>
+        </h1>
+        <span class="subtext">Рассылка объявлений о сдаче жилья</span>
+    </div>
+
+    <div class="content">
+        <div class="unsubscribe-block">
+            <span>Вы решили отписаться</span>
+
+            <span class="message">Выберите причину</span>
+            <ul id="reason_status">
+                <li>
+                    <input id="by_this_app" type="radio" name="reason_status" value="{{ constant('AppBundle\\Entity\\Email::STATUS_UNSUBSCRIBED_BY_THIS_APP') }}">
+                    <label for="by_this_app">Нашли жилье с помощью нашего сервиса</label>
+                </li>
+                <li>
+                    <input id="by_other_app" type="radio" name="reason_status" value="{{ constant('AppBundle\\Entity\\Email::STATUS_UNSUBSCRIBED_BY_OTHER_APP') }}">
+                    <label for="by_other_app">Нашли жилье с помощью другого сервиса</label>
+                </li>
+                <li>
+                    <input id="by_other" type="radio" name="reason_status" value="{{ constant('AppBundle\\Entity\\Email::STATUS_UNSUBSCRIBED_BY_OTHER') }}">
+                    <label for="by_other">Другая причина</label>
+                </li>
+            </ul>
+
+            <textarea id="reason_text" ></textarea>
+
+            <button id="btn_unsubscribe" type="button">ОТПИСАТЬСЯ</button>
+        </div>
+
+    </div>
+</div>
+
+</body>
+<script>
+
+    var btn = document.getElementById('btn_unsubscribe');
+    var fld_reason_text = document.querySelectorAll('#reason_text');
+    var fld_reason_status = document.querySelectorAll('#reason_status input[type=radio]');
+
+    btn.onclick = function () {
+        var reason_text = fld_reason_text.value;
+        var reason_status = null;
+
+        var length_fld_reason_status = fld_reason_status.length;
+        for (var i = 0; i < length_fld_reason_status; i++) {
+            if (fld_reason_status[i].checked) {
+                reason_status = fld_reason_status.value;
+            }
+        }
+
+        var reason_status_error = document.querySelector('.message');
+        if (null === reason_status) {
+            reason_status_error.className = 'error message';
+            return;
+        } else {
+            reason_status_error.className = 'message';
+        }
+
+        var data = new FormData();
+        data.append('hash_id', '{{ hash_id }}');
+        data.append('reason_status', reason_status);
+        data.append('reason_text', reason_text);
+
+        var xhr = new XMLHttpRequest();
+
+        xhr.open('POST', '{{ path('api_unsubscribe') }}', true);
+        xhr.send(data);
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState != 4) return;
+
+            console.info(xhr.responseText);
+
+            if (xhr.status = 200) {
+                var data = JSON.parse(xhr.responseText);
+                if(data.status === 'ok'){
+                    alert('Теперь вы отписаны');
+                } else {
+                    alert('Что то пошло не так');
+                }
+            }
+        }
+    }
+
+</script>
+
+</html>

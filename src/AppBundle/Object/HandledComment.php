@@ -20,7 +20,9 @@ class HandledComment
 
     public function addSubwayId($subway_id)
     {
-        $this->subway_ids[] = $subway_id;
+        if(!in_array($subway_id, $this->subway_ids)) {
+            $this->subway_ids[] = $subway_id;
+        }
 
         return true;
     }

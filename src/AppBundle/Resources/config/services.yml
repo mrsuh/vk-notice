@@ -27,3 +27,14 @@ services:
 
     storage.handled_comment:
         class: 'AppBundle\Storage\HandledCommentStorage'
+
+
+# hash start =============================================================================
+
+    hash.unsubscribe:
+        class: 'AppBundle\Service\HashService'
+        arguments: ['%hash.salt.unsubscribe%', '%hash.min_hash_length%', '%hash.alphabet%']
+
+
+# hash end ===============================================================================
+

@@ -84,7 +84,7 @@ class Notify
                     $this->handleComments($city, $needles, $comments);
                 }
 
-                //$this->repo_community->update($community, ['last_comment_id' => $last_comment_id]);
+                $this->repo_community->update($community, ['last_comment_id' => $last_comment_id]);
             }
 
             $this->mail->handle($city);
@@ -150,8 +150,7 @@ class Notify
 
     private function getCommentType(&$text)
     {
-
-        $room_list = ['комнату', 'комната'];
+        $room_list = ['комнату', 'комната', 'комнаты'];
         $flat_list = ['квартиру', 'квартира', 'кв.', 'кв ', 'кв-'];
 
         $room_pos = PHP_INT_MAX;
@@ -185,7 +184,6 @@ class Notify
             return Comment::TYPE_ROOM;
         }
     }
-
 
     public function getLastCommentId(Community $community)
     {

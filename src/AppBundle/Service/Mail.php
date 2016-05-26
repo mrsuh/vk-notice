@@ -80,12 +80,14 @@ class Mail
             ]
         );
 
-        $swift_message = \Swift_Message::newInstance()
-            ->setSubject('VK Notify')
-            ->setFrom('notify@vn.suntwirl.ru')
-            ->setTo($message->getEmail())
-            ->setBody($body, 'text/html');
+        file_put_contents($message->getEmail() . date('_H:i:s') . '.html', $body);
 
-        $this->mailer->send($swift_message);
+//        $swift_message = \Swift_Message::newInstance()
+//            ->setSubject('VK Notify')
+//            ->setFrom('notify@vn.suntwirl.ru')
+//            ->setTo($message->getEmail())
+//            ->setBody($body, 'text/html');
+//
+//        $this->mailer->send($swift_message);
     }
 }

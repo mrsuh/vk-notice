@@ -4,83 +4,83 @@
     <base href="/">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1 maximum-scale=1 user-scalable=no">
-    <link rel="stylesheet" href="{{ asset('style/common.css') }}">
+    <link rel="stylesheet" href="{{ asset('style/subscribe.css') }}">
 </head>
 <body>
 
-<div class="header">
-    <h1>
-        <span class="label-vk">VK</span>NOTE<span class="label-spb">SPB</span>
-    </h1>
-    <span class="subtext">Рассылка объявлений о сдаче жилья</span>
+<div class="modal">
+    <div class="modal-content">
+        <span class="close"></span>
+        <span class="content"></span>
+    </div>
 </div>
 
-<div class="content">
+<div class="slider-front">
 
-    <div class="info">
-        <p>Искать жилье стало проще!</p>
-        <p>Получай моментальные уведомления о сдаче жилья из популярных групп соцсети VK.com на свой почтовый ящик</p>
-        <p>Как это работает?</p>
-        <ul>
-            <li>Выбери необходимый тип жилья</li>
-            <li>Выбери станцию метро, около которой хотел бы снять жилье</li>
-            <li>Впиши свой почтоый ящик</li>
-            <li>Нажми кнопку "подписаться"</li>
-            <li>Готово!</li>
-        </ul>
-        <p>Как только будет размещенно объявление, которое вам подходит, оно будет выслано
-            на ваш почтовый ящик</p>
+    <div class="header">
+        <h1>
+            <span class="label-vk">VK</span>NOTE<span class="label-city">SPB</span>
+        </h1>
+        <span class="subtext">Рассылка объявлений о сдаче жилья</span>
+
+        <div class="info">
+            Получай моментальные уведомления о сдаче жилья из популярных групп соцсети VK.com на свой почтовый
+            ящик
+        </div>
     </div>
 
-    <div class="fields">
+    <div class="content">
 
-        <div class="flat-email-underground-button">
+        <div class="col-1">
 
-            <div class="underground">
-
-                <div class="underground-block">
-
-                    <div class="inner-block">
-                        <ul>
-                            {% for subway in subways %}
-                                <li>
-                                    <input id="underground-{{ subway.id }}" type="checkbox" value="{{ subway.id }}">
-                                    <label for="underground-{{ subway.id }}">{{ subway.name }}</label>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-
+            <div class="subway-block">
+                <span class="message">Выберите станцию метро</span>
+                <div>
+                    <ul id="fld_subways">
+                        <li>
+                            <input id="subway-all" type="checkbox">
+                            <label for="subway-all">Выбрать всё</label>
+                        </li>
+                        {% for subway in subways %}
+                            <li>
+                                <input id="underground-{{ subway.id }}" type="checkbox" value="{{ subway.id }}">
+                                <label for="underground-{{ subway.id }}">{{ subway.name }}</label>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
 
-            <div class="flat-email-button">
+        </div>
 
-                <div class="flat-block">
+        <div class="col-2">
 
-                    <ul>
-                        <li>
-                            <input id="flat-1" type="checkbox">
-                            <label for="flat-1">Квартира</label>
-                        </li>
-                        <li>
-                            <input id="flat-2" type="checkbox">
-                            <label for="flat-2">Комната</label>
-                        </li>
-                    </ul>
+            <div class="home-type-block">
 
-                </div>
+                <ul id="fld_home_types">
+                    <span class="message">Выберите тип жилья</span>
+                    <li>
+                        <input id="flat-1" type="checkbox"
+                               value="{{ constant('AppBundle\\Entity\\Bind::TYPE_HOME_FLAT') }}">
+                        <label for="flat-1">Квартира</label>
+                    </li>
+                    <li>
+                        <input id="flat-2" type="checkbox"
+                               value="{{ constant('AppBundle\\Entity\\Bind::TYPE_HOME_ROOM') }}">
+                        <label for="flat-2">Комната</label>
+                    </li>
+                </ul>
+
+            </div>
+
+            <div class="email-block">
+                <span class="message">Введите почтовый адрес</span>
+                <input id="fld_email" type="text" placeholder="mrsuh6@gmail.com">
+            </div>
 
 
-                <div class="email-block">
-                    <input type="text" placeholder="mrsuh6@gmail.com">
-                </div>
-
-
-                <div class="button-block">
-                    <button type="button">ПОДПИСАТЬСЯ</button>
-                </div>
-
+            <div class="button-block">
+                <button id="btn_subscribe" type="button">ПОДПИСАТЬСЯ</button>
             </div>
 
         </div>
@@ -89,8 +89,111 @@
 
 </div>
 
-{#<div class="footer"></div>#}
-
 </body>
+<script>
+
+    function validateEmail(email) {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    }
+    var checkbox_subway_all = document.getElementById('subway-all');
+
+    checkbox_subway_all.onclick = function () {
+        var checkboxes = document.querySelectorAll('#fld_subways input[type=checkbox]');
+
+        var checked = checkbox_subway_all.checked;
+
+        var checkboxes_length = checkboxes.length;
+        for (var i = 0; i < checkboxes_length; i++) {
+            checkboxes[i].checked = checked;
+        }
+    };
+
+    var btn = document.getElementById('btn_subscribe');
+    var fld_email = document.getElementById('fld_email');
+    var fld_home_types = document.querySelectorAll('#fld_home_types input[type=checkbox]');
+    var fld_subways = document.querySelectorAll('#fld_subways input[type=checkbox]');
+
+
+    btn.onclick = function () {
+        var email = fld_email.value;
+        var home_types = [];
+        var subways = [];
+
+        var length_fld_home_types = fld_home_types.length;
+        var length_fld_subways = fld_subways.length;
+
+        for (var i = 0; i < length_fld_home_types; i++) {
+            if (fld_home_types[i].checked) {
+                home_types.push(fld_home_types[i].value);
+            }
+        }
+
+        for (var s = 0; s < length_fld_subways; s++) {
+            if (fld_subways[s].checked) {
+                subways.push(fld_subways[s].value);
+            }
+        }
+
+        var check = true;
+
+        var email_error = document.querySelector('.email-block .message');
+        var home_types_error = document.querySelector('.home-type-block .message');
+        var subways_error = document.querySelector('.subway-block .message');
+
+
+        if (!validateEmail(email)) {
+            email_error.className = 'message error';
+            check = false;
+        } else {
+            email_error.className = 'message';
+        }
+
+        if (!home_types.length) {
+            home_types_error.className = 'message error';
+            check = false;
+        } else {
+            home_types_error.className = 'message';
+        }
+
+        if (!subways.length) {
+            subways_error.className = 'message error';
+            check = false;
+        } else {
+            subways_error.className = 'message';
+        }
+
+        if (!check) {
+            return;
+        }
+
+        var data = new FormData();
+        data.append('home_types', home_types);
+        data.append('subways', subways);
+        data.append('email', email);
+        data.append('city', 1);
+
+        var xhr = new XMLHttpRequest();
+
+        xhr.open('POST', '{{ path('api_subscribe') }}', true);
+        xhr.send(data);
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState != 4) return;
+
+            console.info(xhr.responseText);
+
+            if (xhr.status = 200) {
+                var data = JSON.parse(xhr.responseText);
+                if(data.status === 'ok'){
+                    alert('Теерь вы подписаны!');
+                } else {
+                    alert('Что то пошло не так');
+                }
+            }
+        }
+    }
+
+</script>
 
 </html>

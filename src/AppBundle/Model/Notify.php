@@ -4,15 +4,18 @@ namespace AppBundle\Model;
 
 use AppBundle\C;
 use AppBundle\Entity\Bind;
-use AppBundle\Entity\Community;
+use AppBundle\Entity\City;
+use AppBundle\Entity\Email;
+use AppBundle\Exception\ValidationException;
 use Doctrine\ORM\EntityManager;
 
 class Notify
 {
-    private $repo_community;
+    private $repo_subway;
     private $repo_bind;
     private $repo_email;
     private $repo_needle;
+    private $em;
 
     /**
      * Notify constructor.
@@ -20,80 +23,91 @@ class Notify
      */
     public function __construct(EntityManager $em)
     {
-        $this->repo_community = $em->getRepository(C::REPO_COMMUNITY);
+        $this->em = $em;
         $this->repo_bind = $em->getRepository(C::REPO_BIND);
         $this->repo_email = $em->getRepository(C::REPO_EMAIL);
         $this->repo_needle = $em->getRepository(C::REPO_NEEDLE);
+        $this->repo_city = $em->getRepository(C::REPO_CITY);
+        $this->repo_subway = $em->getRepository(C::REPO_SUBWAY);
     }
 
-    /**
-     * @param $email_str
-     * @param $link
-     * @param $needle_str
-     */
-    public function register($email_str, $link, $needle_str)
+    public function subscribe($email_str, $city_id, array $home_types, array $subway_ids)
     {
-        preg_match('/topic-([0-9]+)_([0-9]+)/', $link, $matches);
-        $needle_strs = explode(',', mb_strtolower($needle_str));
+        $this->checkEmail($email_str);
+        $this->checkHomeTypes($home_types);
 
         $email = $this->getEmail($email_str);
 
-        $community = $this->getCommunity($matches[1], $matches[2]);
+        $city = $this->repo_city->findOneBy(['id' => $city_id]);
+        $this->checkCity($city);
 
-        $this->setBind($email, $community, $needle_strs);
+        $home_type = $this->getHomeTypeByTypes($home_types);
+
+        $needles = $this->repo_needle->findBySubwayIds($subway_ids);
+
+        $this->checkSubways($needles);
+
+        $r = $subway_ids;
+        foreach ($needles as $needle) {
+           $r[] =  $this->repo_bind->create([
+                    'email' => $email,
+                    'status' => Bind::STATUS_ACTIVE,
+                    'home_type' => $home_type,
+                    'date' => new \DateTime(),
+                    'city' => $city,
+                    'subway' => $needle->getSubway(),
+                    'needle' => $needle
+                ]
+            );
+        }
+
+        return $r;
     }
 
-    /**
-     * @param $email
-     * @param $community
-     * @param array $needle_strs
-     * @throws \Exception
-     */
-    private function setBind($email, $community, array $needle_strs)
+    public function unsubscribe(Email $email, $reason_status, $reason_text)
     {
-        foreach ($needle_strs as $needle_str) {
+        $this->em->beginTransaction();
+        try {
 
-            $needle = $this->getNeedle(trim($needle_str));
+            $this->repo_email->update($email, [
+                'status' => $reason_status,
+                'unsubscribe_reason' => $reason_text
+            ]);
 
-            $exist = $this->repo_bind->findOneBy(
-                [
-                    'email' => $email,
-                    'community' => $community,
-                    'needle' => $needle
+            $binds = $this->repo_bind->findBy(['email' => $email]);
+
+            foreach($binds as $bind) {
+                $this->repo_bind->update($bind, [
+                    'status' => Bind::STATUS_DELETED
                 ]);
-
-            if ($exist) {
-                if (Bind::STATUS_DELETED === $exist->getStatus()) {
-                    $this->repo_bind->update($exist->getId(), [
-                        'status' => Bind::STATUS_ACTIVE
-                    ]);
-                }
-                continue;
             }
 
-            $this->repo_bind->create([
-                'email' => $email,
-                'community' => $community_id,
-                'needle' => $n,
-                'status' => Bind::STATUS_ACTIVE
-            ]);
+            $this->em->commit();
+        } catch (\Exception $e){
+            $this->em->rollback();
+            throw $e;
         }
+
     }
 
-    /**
-     * @param $needle_str
-     * @return \AppBundle\Entity\Needle|null|object
-     * @throws \Exception
-     */
-    private function getNeedle($needle_str)
+    public function getSubscribedEmailById($id)
     {
-        $needle = $this->repo_needle->findOneBy(['needle' => $needle_str]);
+     return $this->repo_email->findOneBy(['id' => $id, 'status' => Email::STATUS_SUBSCRIBED]);
+    }
 
-        if (!$needle) {
-            $needle = $this->repo_needle->create(['needle' => $needle_str]);
+    public function getSubways()
+    {
+        return $this->repo_subway->findAll();
+    }
+
+    private function getHomeTypeByTypes(array $types)
+    {
+
+        if (2 === count($types)) {
+            return Bind::TYPE_HOME_BOTH;
         }
 
-        return $needle;
+        return $types[0];
     }
 
     /**
@@ -112,56 +126,35 @@ class Notify
         return $email;
     }
 
-    /**
-     * @param $group_id
-     * @param $topic_id
-     * @return Community|null|object
-     * @throws \Exception
-     */
-    private function getCommunity($group_id, $topic_id)
+    private function checkEmail($email)
     {
-        $community = $this->repo_community->findOneBy(
-            [
-                'groupId' => $group_id,
-                'topicId' => $topic_id
-            ]);
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new ValidationException('Email is not valid');
+        };
+    }
 
-        if (!$community) {
-            $community = $this->repo_community->create(
-                [
-                    'group_id' => $group_id,
-                    'topic_id' => $topic_id,
-                    'status' => Community::STATUS_GROUP_NOT_JOINED
-                ]);
+    private function checkCity($city)
+    {
+        if (!$city) {
+            throw new ValidationException('City is not valid');
+        };
+    }
+
+    private function checkSubways(array $subways)
+    {
+        if (!count($subways)) {
+            throw new ValidationException('Subways is not valid');
+        };
+    }
+
+    private function checkHomeTypes(array $types)
+    {
+        $home_types = [Bind::TYPE_HOME_BOTH, Bind::TYPE_HOME_FLAT, Bind::TYPE_HOME_ROOM];
+
+        foreach ($types as $t) {
+            if (!in_array($t, $home_types)) {
+                throw new ValidationException('Home type is not valid');
+            }
         }
-
-        return $community;
-    }
-
-    /**
-     * @param $email
-     * @return bool
-     */
-    public function isValidEmail($email)
-    {
-        return (bool)filter_var($email, FILTER_VALIDATE_EMAIL);
-    }
-
-    /**
-     * @param $data
-     * @return bool
-     */
-    public function isEmpty($data)
-    {
-        return empty($data);
-    }
-
-    /**
-     * @param $link
-     * @return bool
-     */
-    public function isValidLink($link)
-    {
-        return 1 === preg_match('/topic-[0-9]*_[0-9]*/', $link);
     }
 }

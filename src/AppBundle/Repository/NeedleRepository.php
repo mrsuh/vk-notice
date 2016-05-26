@@ -22,4 +22,14 @@ class NeedleRepository extends GeneralRepository
             ->setParameter('city', $city)
             ->getQuery()->getResult();
     }
+
+    public function findBySubwayIds(array $ids)
+    {
+        return $this->createQueryBuilder('n')
+            ->join('n.subway', 's')
+            ->where('s.id in (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
+    }
 }

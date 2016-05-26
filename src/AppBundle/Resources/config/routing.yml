@@ -1,8 +1,27 @@
+#view start =========================================================================
+
 index:
     path:     /
-    defaults: { _controller: AppBundle:Default:index }
+    defaults: { _controller: AppBundle:View/Default:index }
 
-notify:
-    path:     /notify
-    defaults: { _controller: AppBundle:Default:notify }
+unsubscibe:
+    path:     /unsubscribe/{hash_id}
+    defaults: { _controller: AppBundle:View/Default:unsubscribe, hash_id: hash_id }
+
+#view end ===========================================================================
+
+
+
+#api start ==========================================================================
+
+api_subscribe:
+    path:     /api/subscribe
+    defaults: { _controller: AppBundle:Api/Default:subscribe }
     methods: [POST]
+
+api_unsubscribe:
+    path:     /api/unsubscribe
+    defaults: { _controller: AppBundle:Api/Default:unsubscribe }
+    methods: [POST]
+
+#api end ============================================================================

@@ -12,4 +12,10 @@ class EmailRepository extends GeneralRepository
         $this->setData($obj, $data);
         return $this->createObj($obj);
     }
+
+    public function update(Email $obj, array $data)
+    {
+        $this->setData($obj, $data);
+        return $this->updateObj($obj);
+    }
 }

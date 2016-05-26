@@ -23,4 +23,13 @@ class SubwayRepository extends GeneralRepository
 
         return $subways;
     }
+
+    public function findByIds(array $ids)
+    {
+        return $this->createQueryBuilder('s')
+            ->where('s.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
+    }
 }
