@@ -19,8 +19,8 @@ class RenderCommand extends ContainerAwareCommand
         $templating = $this->getContainer()->get('templating');
         $root = $this->getContainer()->get('kernel')->getRootDir();
         file_put_contents(
-            $root.'/../web/index.html',
-            $templating->render('AppBundle:Default:index.html.twig', [
+            $root.'/../web/subscribe.html',
+            $templating->render('AppBundle:Default:subscribe.html.twig', [
             'subways' => $this->getContainer()->get('doctrine.orm.entity_manager')->getRepository(C::REPO_SUBWAY)->findAll()
         ]));
     }

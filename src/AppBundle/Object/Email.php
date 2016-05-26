@@ -12,14 +12,14 @@ class Email
         $this->subways = [];
     }
 
-    public function addSubwayId($subway_id)
+    public function addSubwayIdAndHomeType($subway_id, $home_type)
     {
-        $this->subways[] = $subway_id;
+        $this->subways[$subway_id] = $home_type;
 
         return true;
     }
 
-    public function getSubwayIds()
+    public function getSubwayIdAndHomeType()
     {
         return $this->subways;
     }

@@ -71,7 +71,7 @@ class Notify
 
             $this->repo_email->update($email, [
                 'status' => $reason_status,
-                'unsubscribe_reason' => $reason_text
+                'unsubscribed_reason' => $reason_text
             ]);
 
             $binds = $this->repo_bind->findBy(['email' => $email]);

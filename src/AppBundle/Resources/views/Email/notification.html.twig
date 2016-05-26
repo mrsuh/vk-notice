@@ -8,7 +8,7 @@
 
 <div style="padding-top: 20px;padding-bottom: 20px">
 
-    <a href="http://vn.suntwirl.ru"
+    <a href="http://vknotice.ru"
        style="padding-left: 2%;padding-right: 2%;text-decoration: none;color: #383434;display: block;font-size: 30px;">
         <span style="color: #7292bd;">VK</span>NOTICE<span style="color: #7292bd;">SPB</span></a>
     <span style="padding-left: 2%;padding-right: 2%;display: block;color: #C2BFB8;font-size: 14px;margin-left: 8px;">Рассылка объявлений о сдаче жилья</span>
@@ -47,9 +47,10 @@
                 <span style="padding-right: 10px">Комната</span>
             {% endif %}
 
-            <a href="https://vk.com/id{{ comment.getUserId() }}" style="text-decoration: none;color: #7292bd" target="_blank" rel="noopener">
-            <span style="width: 25px; height: 25px; border-radius: 50%; background-color: #7292bd; display: inline-block;color: #ffffff; line-height: 25px; text-align: center;font-weight: bold;margin-bottom: 5px;">С</span>
-            <span>Связаться</span>
+            <a href="https://vk.com/id{{ comment.getUserId() }}" style="text-decoration: none;color: #7292bd"
+               target="_blank" rel="noopener">
+                <span style="width: 25px; height: 25px; border-radius: 50%; background-color: #7292bd; display: inline-block;color: #ffffff; line-height: 25px; text-align: center;font-weight: bold;margin-bottom: 5px;">С</span>
+                <span>Связаться</span>
             </a>
         </div>
 
@@ -59,13 +60,13 @@
             {{ comment.getText() }}
         </div>
 
-       <div style="margin-bottom: 45px">
+        <div style="margin-bottom: 45px">
             {% if comment.getPhotos() is not empty %}
                 <div style="width: 100%;font-size: 0">
                     {% for photo in comment.getPhotos() %}
 
-                            <img src="{{ photo }}"
-                                 style="width: 100%; height: auto; margin-bottom: 5px">
+                        <img src="{{ photo }}"
+                             style="width: 100%; height: auto; margin-bottom: 5px">
 
                     {% endfor %}
                 </div>
@@ -78,10 +79,10 @@
 
 <hr style="border: none;color: #E0DDD5;background-color: #E0DDD5;height: 2px;">
 
-
 <div class="footer" style="padding-top: 20px;padding-bottom: 20px;height: 50px;">
     <span style=" color: #C2BFB8;display: block;font-size: 14px;text-align: center;">Вы получили это письмо, поскольку подписаны на рассылку уведомлений из сообществ vk.</span>
-    <span style=" color: #C2BFB8;display: block;font-size: 14px;text-align: center;">Отписаться</span>
+    <a href="{{ path('unsubscibe', {hash_id: email_hash_id}) }}"
+       style="color: #C2BFB8;display: block;font-size: 14px;text-align: center; text-decoration: none">Отписаться</a>
 </div>
 
 </body>

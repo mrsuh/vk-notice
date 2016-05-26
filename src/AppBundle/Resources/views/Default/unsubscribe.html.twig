@@ -8,9 +8,10 @@
 </head>
 <body>
 <div class="slider-front">
+
     <div class="header">
         <h1>
-            <span class="label-vk">VK</span>NOTE<span class="label-city">SPB</span>
+            <span class="label-vk">VK</span>NOTICE<span class="label-city">SPB</span>
         </h1>
         <span class="subtext">Рассылка объявлений о сдаче жилья</span>
     </div>
@@ -47,7 +48,7 @@
 <script>
 
     var btn = document.getElementById('btn_unsubscribe');
-    var fld_reason_text = document.querySelectorAll('#reason_text');
+    var fld_reason_text = document.querySelector('#reason_text');
     var fld_reason_status = document.querySelectorAll('#reason_status input[type=radio]');
 
     btn.onclick = function () {
@@ -57,7 +58,7 @@
         var length_fld_reason_status = fld_reason_status.length;
         for (var i = 0; i < length_fld_reason_status; i++) {
             if (fld_reason_status[i].checked) {
-                reason_status = fld_reason_status.value;
+                reason_status = fld_reason_status[i].value;
             }
         }
 
@@ -81,8 +82,6 @@
 
         xhr.onreadystatechange = function () {
             if (xhr.readyState != 4) return;
-
-            console.info(xhr.responseText);
 
             if (xhr.status = 200) {
                 var data = JSON.parse(xhr.responseText);

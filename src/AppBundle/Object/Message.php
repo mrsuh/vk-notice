@@ -6,6 +6,7 @@ class Message
 {
     private $email;
     private $comments;
+    private $email_hash_id;
 
     public function __construct()
     {
@@ -23,6 +24,18 @@ class Message
     public function getEmail()
     {
         return $this->email;
+    }
+
+    public function setEmailHashId($email_hash_id)
+    {
+        $this->email_hash_id = $email_hash_id;
+
+        return true;
+    }
+
+    public function getEmailHashId()
+    {
+        return $this->email_hash_id;
     }
 
     public function addComment(HandledComment $comment)

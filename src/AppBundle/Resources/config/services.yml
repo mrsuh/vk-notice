@@ -16,6 +16,7 @@ services:
             - "@templating"
             - "@storage.comment"
             - "@storage.handled_comment"
+            - "@hash.unsubscribe"
 
 
     model.notify:

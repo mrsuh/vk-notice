@@ -84,7 +84,7 @@ class Notify
                     $this->handleComments($city, $needles, $comments);
                 }
 
-                $this->repo_community->update($community, ['last_comment_id' => $last_comment_id]);
+               // $this->repo_community->update($community, ['last_comment_id' => $last_comment_id]);
             }
 
             $this->mail->handle($city);
@@ -101,6 +101,7 @@ class Notify
             'start_comment_id' => $last_comment_id,
             'count' => '100'
         ]);
+        usleep(2000);
 
         return $response['response']['items'];
     }

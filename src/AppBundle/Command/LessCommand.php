@@ -20,6 +20,7 @@ class LessCommand extends ContainerAwareCommand
     {
         $less = new lessc();
         $dir = $this->getContainer()->get('kernel')->getRootDir() . '/../web/style';
-        $less->compileFile($dir.'/common.less', $dir.'/common.css');
+        $less->compileFile($dir.'/subscribe.less', $dir.'/subscribe.css');
+        $less->compileFile($dir.'/unsubscribe.less', $dir.'/unsubscribe.css');
     }
 }
