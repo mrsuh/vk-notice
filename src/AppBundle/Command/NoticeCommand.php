@@ -4,11 +4,11 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class NotifyCommand extends ContainerAwareCommand
+class NoticeCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
-        $this->setName('app:notify');
+        $this->setName('app:notice');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
