@@ -85,7 +85,8 @@ class Mail
                     continue;
                 }
 
-                if ($comment_objects[$handled_comment->getid()]->getType() !== $home_type) {
+                $comment_home_type = $comment_objects[$handled_comment->getid()]->getType();
+                if ($comment_home_type !== $home_type && $home_type !== Bind::TYPE_HOME_BOTH ) {
                     continue;
                 }
 
@@ -113,12 +114,14 @@ class Mail
             ]
         );
 
-        $swift_message = \Swift_Message::newInstance()
-            ->setSubject('VK Notify')
-            ->setFrom('notify@vn.suntwirl.ru')
-            ->setTo($message->getEmail())
-            ->setBody($body, 'text/html');
+        file_put_contents($message->getEmail() . date('_H:i:s') . '.html', $body);
 
-        $this->mailer->send($swift_message);
+//        $swift_message = \Swift_Message::newInstance()
+//            ->setSubject('VK Notify')
+//            ->setFrom('notify@vn.suntwirl.ru')
+//            ->setTo($message->getEmail())
+//            ->setBody($body, 'text/html');
+//
+//        $this->mailer->send($swift_message);
     }
 }
