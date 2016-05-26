@@ -85,7 +85,8 @@ class Mail
                     continue;
                 }
 
-                if ($comment_objects[$handled_comment->getid()]->getType() !== $home_type) {
+                $comment_home_type = $comment_objects[$handled_comment->getid()]->getType();
+                if ($comment_home_type !== $home_type && $home_type !== Bind::TYPE_HOME_BOTH ) {
                     continue;
                 }
 
