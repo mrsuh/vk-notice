@@ -21,4 +21,7 @@ parameters:
     vk.app_id: 5238737
     vk.username: mrsuh@mail.ru
     vk.password: YGwEQhenea13HqXbSrQz
+    hash.min_hash_length: 20
+    hash.alphabet: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890
+    hash.salt.unsubscribe: salt
 
