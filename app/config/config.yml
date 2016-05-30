@@ -66,7 +66,6 @@ swiftmailer:
     host:      "%mailer_host%"
     username:  "%mailer_user%"
     password:  "%mailer_password%"
-    spool:     { type: memory }
 
 
 mrsuh_vk_api:
@@ -89,3 +88,27 @@ mrsuh_vk_api:
         - 'notifications'
         - 'stats'
     version: '5.50'
+
+
+old_sound_rabbit_mq:
+    connections:
+        default:
+            host:     'localhost'
+            port:     5672
+            user:     '%rabbit.username%'
+            password: '%rabbit.password%'
+            vhost:    '/'
+            lazy:     false
+            #heartbeat: 2
+
+    producers:
+        email:
+            connection:       default
+            exchange_options: {name: 'email', type: direct}
+
+    consumers:
+        email:
+            connection:       default
+            exchange_options: {name: 'email', type: direct}
+            queue_options:    {name: 'email' }
+            callback:         consumer.email

@@ -12,7 +12,7 @@ parameters:
 
     mailer_transport:  smtp
     mailer_host:       127.0.0.1
-    mailer_user:       ~
+    mailer_user:       notice@vknotice.ru
     mailer_password:   ~
 
     # A secret key that's used to generate certain security-related tokens
@@ -24,4 +24,6 @@ parameters:
     hash.min_hash_length: 20
     hash.alphabet: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890
     hash.salt.unsubscribe: salt
+    rabbit.username: guest
+    rabbit.password: guest
 

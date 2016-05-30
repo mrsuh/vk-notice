@@ -17,7 +17,7 @@ services:
             - "@storage.comment"
             - "@storage.handled_comment"
             - "@hash.unsubscribe"
-            - "@mailer"
+            - "@producer.email"
 
 
     model.notify:
@@ -39,4 +39,22 @@ services:
 
 
 # hash end ===============================================================================
+
+
+# ampq consumers start ===================================================================
+    #email
+    consumer.email:
+        class: 'AppBundle\Queue\Consumer\EmailConsumer'
+        arguments: ['@mailer', '%mailer_user%']
+
+# ampq consumers end =====================================================================
+
+
+# ampq producer start ====================================================================
+
+    producer.email:
+        class: 'AppBundle\Queue\Producer\EmailProducer'
+        arguments: ['@old_sound_rabbit_mq.email_producer']
+
+# ampq producer end =====================================================================
 
