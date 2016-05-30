@@ -8,6 +8,7 @@ use AppBundle\Entity\City;
 use AppBundle\Object\Email;
 use AppBundle\Object\HandledComment;
 use AppBundle\Object\Message;
+use AppBundle\Queue\Producer\EmailProducer;
 use AppBundle\Storage\CommentStorage;
 use AppBundle\Storage\HandledCommentStorage;
 use Doctrine\ORM\EntityManager;
@@ -21,7 +22,7 @@ class Mail
     private $storage_comment;
     private $storage_handled_comments;
     private $service_hash;
-    private $mailer;
+    private $producer_email;
 
     public function __construct(
         EntityManager $em,
@@ -29,7 +30,7 @@ class Mail
         CommentStorage $storage_comment,
         HandledCommentStorage $storage_handled_comments,
         HashService $service_hash,
-        \Swift_Mailer $mailer
+        EmailProducer $producer_email
     )
     {
         $this->repo_subway = $em->getRepository(C::REPO_SUBWAY);
@@ -38,7 +39,7 @@ class Mail
         $this->storage_handled_comments = $storage_handled_comments;
         $this->storage_comment = $storage_comment;
         $this->service_hash = $service_hash;
-        $this->mailer = $mailer;
+        $this->producer_email = $producer_email;
         $this->subways = $em->getRepository(C::REPO_SUBWAY)->findAllNamesIndexById();
     }
 
@@ -114,12 +115,10 @@ class Mail
             ]
         );
 
-        $swift_message = \Swift_Message::newInstance()
-            ->setSubject('VK Notify')
-            ->setFrom('notify@vn.suntwirl.ru')
-            ->setTo($message->getEmail())
-            ->setBody($body, 'text/html');
-
-        $this->mailer->send($swift_message);
+        $this->producer_email->send(
+            $message->getEmail(),
+            'vk notice spb',
+            $body
+        );
     }
 }

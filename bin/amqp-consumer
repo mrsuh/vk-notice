@@ -1,0 +1,8 @@
+#!/bin/sh
+
+cd "$( cd `dirname $0` && pwd )/.."
+
+while true ; do
+  php bin/console rabbitmq:consumer email --env=prod >> var/logs/amqp-email.log
+  sleep 1
+done
