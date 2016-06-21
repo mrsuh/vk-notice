@@ -8,7 +8,8 @@ use Longman\TelegramBot\Exception\TelegramException;
 
 try {
     $parser = new Parser();
-    $parameters = $parser->parse(file_get_contents(__DIR__ . '/../app/config/parameters.yml'));
+    $parse = $parser->parse(file_get_contents(__DIR__ . '/../app/config/parameters.yml'));
+    $parameters = $parse['parameters'];
 
     $telegram = new Telegram($parameters['bot.api_key'], $parameters['bot.name']);
 
