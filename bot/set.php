@@ -10,7 +10,7 @@ try {
     $parser = new Parser();
     $parameters = $parser->parse(file_get_contents('/../app/config/parameters.yml'));
 
-    $telegram = new Telegram($API_KEY, $BOT_NAME);
+    $telegram = new Telegram($parameters['bot.api_key'], $parameters['bot.name']);
 
     $result = $telegram->setWebHook($parameters['bot.hook_url']);
     if ($result->isOk()) {
