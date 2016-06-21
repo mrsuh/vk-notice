@@ -1,10 +1,7 @@
-# This file is a "template" of what your parameters.yml file should look like
-# Set parameters here that may be different on each deployment target of the app, e.g. development, staging, production.
-# http://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
 parameters:
     database_host:     127.0.0.1
     database_port:     ~
-    database_name:     vk-notify
+    database_name:     vk-notice
     database_user:     root
     database_password: ~
     # You should uncomment this if you want use pdo_sqlite
@@ -17,13 +14,20 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
-    vk.user_id: 56952312
-    vk.app_id: 5238737
+
+    vk.user_id: 54442334
+    vk.app_id: 5344237
     vk.username: mrsuh@mail.ru
-    vk.password: YGwEQhenea13HqXbSrQz
+    vk.password: 23hdfgerHqXbSr23d
+
     hash.min_hash_length: 20
     hash.alphabet: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890
     hash.salt.unsubscribe: salt
+
     rabbit.username: guest
     rabbit.password: guest
+
+    bot.api_key: key
+    bot.name: name
+    bot.host_url: https://url
 
