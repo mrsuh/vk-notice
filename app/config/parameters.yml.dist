@@ -1,7 +1,7 @@
 parameters:
     database_host:     127.0.0.1
     database_port:     ~
-    database_name:     vk-notify
+    database_name:     vk-notice
     database_user:     root
     database_password: ~
     # You should uncomment this if you want use pdo_sqlite
