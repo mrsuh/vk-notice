@@ -1,6 +1,8 @@
 vk-notify
 =========
 
+![Screen](/screen.png)
+
 Installation
 ------------
 ```
